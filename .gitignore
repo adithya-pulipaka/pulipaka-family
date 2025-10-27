@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Virtual environment
+.venv/
+env/
+venv/
+# Add other common virtual environment names if used
+# e.g., .env_projectname/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.bak
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Environment variables
+.env
+.flaskenv
+
+# Database files
+*.sqlite3
+*.db
+*.db-journal
+
+# Uploaded files (if applicable)
+media/
+uploads/
+
+# Test reports
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook files (if applicable)
+.ipynb_checkpoints/
