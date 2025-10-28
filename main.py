@@ -1,9 +1,12 @@
+from datetime import datetime
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
+from routers import events
 
 app = FastAPI()
 
+app.include_router(events.router)
 
 class Item(BaseModel):
     name: str
