@@ -1,9 +1,20 @@
+from datetime import datetime
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
+from routers import events
+from contextlib import asynccontextmanager
+from lib.mongo_connection import connect_mongo, close_mongo
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan():
+    await connect_mongo()
+    yield
+    await close_mongo()
 
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(events.router)
 
 class Item(BaseModel):
     name: str
