@@ -1,29 +1,34 @@
 import os
 from pymongo import AsyncMongoClient
+from pymongo.asynchronous.database import AsyncDatabase
 from dotenv import load_dotenv
+import certifi
 
 load_dotenv()
 
 client: AsyncMongoClient | None = None
+db: AsyncDatabase | None = None
 
-async def connect_to_mongo():
+async def connect_mongo():
     global client
-    client = AsyncMongoClient(os.environ["MONGODB_URL"])
+    global db
+    client = AsyncMongoClient(os.environ["MONGODB_URL"].format(certifi.where()))
     try:
-        # Ping the database to check the connection
         await client.admin.command('ping')
         print("Connected to MongoDB!")
+        db = client.get_database(os.environ["DB_NAME"])
+
     except Exception as e:
         print(f"Failed to connect to MongoDB: {e}")
         client = None
 
-async def close_mongo_connection():
+async def close_mongo():
     global client
     if client:
         await client.close()
         print("Closed MongoDB connection.")
 
-def get_mongo_client() -> AsyncMongoClient:
-    return client
+async def get_mongo_db() -> AsyncDatabase:
+    return db
 
 

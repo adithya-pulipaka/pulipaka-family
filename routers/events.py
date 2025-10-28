@@ -1,21 +1,25 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from models.Event import Event
-import uuid
-from lib.mongo_connection import db
+from lib.mongo_connection import get_mongo_db
+from pymongo.asynchronous.database import AsyncDatabase
+from pymongo.asynchronous.collection import AsyncCollection
 
 router = APIRouter(prefix='/events')
 
-# dummy data structure for testing
-events = []
+EVENTS_COLLECTION = "events"
+
+def get_events_collection(db: AsyncDatabase) -> AsyncCollection:
+    return db.get_collection(EVENTS_COLLECTION)
 
 @router.post("/")
-async def create_event(event: Event) -> Event | None:
-    modified_event = event.model_dump()
-    modified_event["event_id"] = uuid.uuid4()
-    events.append(modified_event)
-    return modified_event
+async def create_event(event: Event, db: AsyncDatabase = Depends(get_mongo_db)) -> Event | None:
+    coll: AsyncCollection = get_events_collection(db)
+    modified_event = event.model_dump(by_alias=True, exclude={"event_id"})
+    await coll.insert_one(modified_event)
+    return Event(**modified_event)
 
 @router.get("/")
-async def get_events() -> list[Event] | None:
-    print(db)
+async def get_events(db: AsyncDatabase = Depends(get_mongo_db)) -> list[Event] | None:
+    coll: AsyncCollection = get_events_collection(db)
+    events = await coll.find({}).to_list()
     return events
