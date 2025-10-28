@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
-from routers import events
+from routers import events, media
 from contextlib import asynccontextmanager
 from lib.mongo_connection import connect_mongo, close_mongo
 
@@ -15,6 +15,7 @@ async def lifespan(my_app:FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(events.router)
+app.include_router(media.router)
 
 class Item(BaseModel):
     name: str
