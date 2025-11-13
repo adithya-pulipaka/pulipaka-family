@@ -3,11 +3,12 @@ from typing import Annotated, Optional
 from bson import ObjectId
 
 from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
+from fastapi_camelcase import CamelModel
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
-class Event(BaseModel):
-    event_id: Optional[PyObjectId] = Field(alias="_id", default=None, serialization_alias="event_id")
+class Event(CamelModel):
+    event_id: Optional[PyObjectId] = Field(alias="_id", default=None, serialization_alias="eventId")
     event_name: str = None
     event_start_time: datetime = None
     event_end_time: datetime = None

@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from routers import events, media
 from contextlib import asynccontextmanager
 from lib.mongo_connection import connect_mongo, close_mongo
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 @asynccontextmanager
 async def lifespan(my_app:FastAPI):
@@ -13,6 +15,18 @@ async def lifespan(my_app:FastAPI):
     await close_mongo()
 
 app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(events.router)
 app.include_router(media.router)
@@ -36,3 +50,6 @@ def read_item(item_id: int, q: Union[str, None] = None):
 @app.put("/items/{item_id}")
 def update_item(item_id: int, item: Item):
     return {"item_name": item.name, "item_id": item_id}
+
+if __name__ == "__main__":
+    uvicorn.run(app)
