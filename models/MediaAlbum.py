@@ -1,14 +1,15 @@
 from pydantic import BaseModel, BeforeValidator, Field, ConfigDict
 from typing import Optional, Annotated, List
 from bson import ObjectId
+from fastapi_camelcase import CamelModel
 
 from models.Image import Image
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
-class MediaAlbum(BaseModel):
-    album_id: Optional[PyObjectId] = Field(alias="_id", default=None, serialization_alias="album_id")
-    event_id: str = None
+class MediaAlbum(CamelModel):
+    album_id: Optional[PyObjectId] = Field(alias="_id", default=None, serialization_alias="albumId")
+    event_id: str = Field(default=None, serialization_alias="eventId")
     images: list[Image] = []
 
     model_config = ConfigDict(
